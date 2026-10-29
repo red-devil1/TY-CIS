@@ -1,0 +1,47 @@
+EXPERIMENT 10
+Firewall Configuration and Rule-Based Filtering
+Step-by-step practical chapter | Source: PDF pages 60–71
+1. Aim
+Create and test application-based firewall rules using Windows Defender Firewall.
+2. Tools Required
+Windows 10/11; Windows Defender Firewall with Advanced Security; Google Chrome installed (the source uses the path shown below). Administrator access may be required.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Open advanced firewall settings
+1.	Press Win+R, type `wf.msc`, and press Enter. Approve the administrator prompt if requested.
+2.	The console has Inbound Rules and Outbound Rules. Inbound rules control connections coming into the computer; outbound rules control connections leaving it.
+Step 2: Create an inbound rule for Chrome
+3.	Select Inbound Rules → New Rule in the right pane.
+4.	Choose Program → Next. Select “This program path” and browse to Chrome. The source's example path is `C:\Program Files\Google\Chrome\Application\chrome.exe`; if Chrome is installed elsewhere, browse to the actual `chrome.exe`.
+5.	Choose Block the connection for a controlled demonstration, then Next. Select the profiles appropriate for your lab (Domain, Private, Public); do not broaden a block rule unnecessarily on a shared or work device.
+6.	Name it `Lab - Block Chrome Inbound` and finish.
+Step 3: Understand the test limitation
+7.	A browser's ordinary web requests are usually outbound connections, so an inbound program rule may not visibly stop normal browsing. This is an important distinction, not necessarily a failed rule.
+8.	To demonstrate the inbound rule, use a controlled inbound connection/application test or inspect the rule state in the firewall console. Avoid testing by exposing a computer to the public internet.
+Step 4: Create an outbound rule for a clear demonstration
+9.	Select Outbound Rules → New Rule → Program.
+10.	Choose the actual Chrome executable path, select Block the connection, and apply only to the lab profile you intend to test.
+11.	Name it `Lab - Block Chrome Outbound`. Save your work before testing.
+Step 5: Test the outbound rule
+12.	Close Chrome completely and reopen it, then attempt to load a harmless website. If the rule applies to the active profile and executable, the connection should be blocked.
+13.	Disable the lab rule or change its action to Allow to restore browsing. Do not leave a blocking rule enabled if it disrupts normal work.
+Step 6: Verify and clean up
+14.	In `wf.msc`, confirm that the rule is enabled and its action/profile/path are correct.
+15.	After recording the result, right-click the lab rules and choose Disable Rule or delete them to restore the original behavior.
+5. Verification and Troubleshooting
+•	Check the rule's Enabled status, Action, Program path, and selected network profiles in the console.
+•	If browsing is not blocked by the outbound rule, confirm Chrome is fully closed, the rule targets the executable actually running, and the current network profile is selected.
+•	If the source path does not exist, browse to the real Chrome executable rather than creating a rule for a nonexistent path.
+6. Expected Result
+Application-based inbound and outbound firewall rules were created and their behavior was checked in Windows Defender Firewall.
+7. Shortcut / Improvement Notes
+Create a named lab rule, test one direction at a time, and disable the rule immediately after recording the result.
+8. Conclusion
+Application-based inbound and outbound firewall rules were created and their behavior was checked in Windows Defender Firewall.
+9. Viva / Review Questions
+16.	What is a firewall?
+17.	How do inbound and outbound rules differ?
+18.	Why might an inbound Chrome rule not block normal web browsing?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
