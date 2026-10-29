@@ -1,0 +1,58 @@
+EXPERIMENT 2
+RSA Encryption and Decryption
+Step-by-step practical chapter | Source: PDF pages 7–10
+1. Aim
+Demonstrate RSA encryption and decryption using public and private key parameters.
+2. Tools Required
+Python 3.x; Visual Studio Code or another Python editor.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Create the Python file
+1.	Open the practicals folder in VS Code and create `exp2_rsa.py`.
+Step 2: Understand the demonstration parameters
+2.	The source uses p = 13, q = 17, n = 221, public exponent e = 5, and private exponent d = 77.
+3.	These are deliberately small classroom values. They are not secure for real communication.
+Step 3: Enter and save the code
+4.	Copy the program below into `exp2_rsa.py` and save it.
+Step 4: Run the experiment
+5.	Open the VS Code terminal and run `python exp2_rsa.py` (or `py exp2_rsa.py`).
+6.	Enter an integer message between 0 and 220. For example, enter `28`.
+7.	Record the encrypted integer and decrypted integer.
+Step 5: Verify the result
+8.	The decrypted integer should equal the integer entered. Repeat with another small value.
+9.	If you enter a value greater than or equal to n, this simple demonstration does not represent it correctly as a single RSA message block; use a value below 221.
+5. Program / Configuration
+# Educational RSA demonstration using the source practical's small values
+p, q = 13, 17
+n = p * q
+phi = (p - 1) * (q - 1)
+e = 5
+d = 77
+
+message = int(input("Enter an integer message (0 to 220): "))
+if not 0 <= message < n:
+    raise ValueError("For this demonstration, message must be between 0 and n-1.")
+
+ciphertext = pow(message, e, n)
+print("Encrypted message:", ciphertext)
+
+decrypted_message = pow(ciphertext, d, n)
+print("Decrypted message:", decrypted_message)
+
+5. Verification and Troubleshooting
+•	For input `28`, expected output is encrypted message `214` and decrypted message `28`, matching the source practical.
+•	`pow(message, e, n)` performs modular exponentiation efficiently.
+•	If the decrypted value is not the original, confirm the parameter values and that the message is less than n.
+6. Expected Result
+RSA encryption with the public exponent and decryption with the private exponent were demonstrated successfully.
+7. Shortcut / Improvement Notes
+Python's built-in `pow(base, exponent, modulus)` is the concise and efficient way to calculate modular exponentiation.
+8. Conclusion
+RSA encryption with the public exponent and decryption with the private exponent were demonstrated successfully.
+9. Viva / Review Questions
+10.	What are the public and private RSA parameters?
+11.	Why must the message be smaller than n in this simple demonstration?
+12.	Why is this example not secure for real use?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
