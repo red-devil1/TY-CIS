@@ -1,0 +1,84 @@
+EXPERIMENT 1
+Implementation of Substitution and Transposition Ciphers
+Step-by-step practical chapter | Source: PDF pages 1–6
+1. Aim
+Implement encryption and decryption using the Caesar substitution cipher and the Rail Fence transposition cipher.
+2. Tools Required
+Python 3.x; Visual Studio Code (or another Python editor); terminal/command prompt.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Prepare the workspace
+1.	Install Python 3 if it is not already installed. During Windows installation, enable “Add Python to PATH.”
+2.	Open Visual Studio Code and create a folder named CIS_Practicals. Open that folder in VS Code.
+3.	Create a new file named exp1_ciphers.py.
+Step 2: Check Python
+4.	Open Terminal → New Terminal in VS Code.
+5.	Run `python --version`. If Windows does not recognize it, try `py --version`. Continue using the command that works on your computer.
+Step 3: Enter the program
+6.	Copy the following complete program into exp1_ciphers.py and save it. It includes the source practical’s Caesar and two-rail even/odd Rail Fence method.
+def caesar_encrypt(text, shift):
+    result = ""
+    shift %= 26
+    for char in text:
+        if char.isupper():
+            result += chr((ord(char) - 65 + shift) % 26 + 65)
+        elif char.islower():
+            result += chr((ord(char) - 97 + shift) % 26 + 97)
+        else:
+            result += char
+    return result
+
+def caesar_decrypt(text, shift):
+    return caesar_encrypt(text, -shift)
+
+def rail_fence_encrypt(text):
+    # Two-rail even/odd transposition used in the source practical
+    return text[::2] + text[1::2]
+
+def rail_fence_decrypt(text):
+    even_count = (len(text) + 1) // 2
+    even_part = text[:even_count]
+    odd_part = text[even_count:]
+    result = []
+    for i, char in enumerate(even_part):
+        result.append(char)
+        if i < len(odd_part):
+            result.append(odd_part[i])
+    return "".join(result)
+
+message = input("Enter a message: ")
+shift = int(input("Enter the Caesar shift value: "))
+
+encrypted = caesar_encrypt(message, shift)
+print("Caesar encrypted:", encrypted)
+print("Caesar decrypted:", caesar_decrypt(encrypted, shift))
+
+rail_encrypted = rail_fence_encrypt(message)
+print("Rail Fence encrypted:", rail_encrypted)
+print("Rail Fence decrypted:", rail_fence_decrypt(rail_encrypted))
+
+Step 4: Run the program
+7.	In the terminal, move to the folder containing the file if needed, then run `python exp1_ciphers.py` (or `py exp1_ciphers.py`).
+8.	Enter a message such as `Hello Coders!` and a shift such as `3` when prompted.
+9.	Read the encrypted and decrypted results. The decrypted result should match the original input.
+Step 5: Test both techniques
+10.	Run the program again with a short phrase such as `Hello World` and check the Rail Fence output.
+11.	Try a shift of `0`, a shift of `3`, and a shift larger than 26. The modulo operation should wrap alphabetic characters around the alphabet.
+12.	Try spaces and punctuation to confirm that they are preserved by the Caesar implementation.
+5. Verification and Troubleshooting
+•	For Caesar with shift 3, `HELLO` becomes `KHOOR`; decryption returns `HELLO`.
+•	Rail Fence here means the two-rail even/odd method shown in the source, not the general zigzag version with an arbitrary rail count.
+•	If the decrypted result differs, check that the complete code was copied and that the correct file was run.
+6. Expected Result
+Both Caesar Cipher and the source practical’s two-rail Rail Fence encryption/decryption run successfully; decryption recovers the original message.
+7. Shortcut / Improvement Notes
+Keep encryption and decryption in separate functions so you can test each one independently. The even/odd Rail Fence version is the two-rail method shown in the source practical.
+8. Conclusion
+Both Caesar Cipher and the source practical’s two-rail Rail Fence encryption/decryption run successfully; decryption recovers the original message.
+9. Viva / Review Questions
+13.	What is the difference between substitution and transposition?
+14.	What does the Caesar shift value represent?
+15.	Why is Rail Fence not considered secure today?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
