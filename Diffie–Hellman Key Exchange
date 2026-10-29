@@ -1,0 +1,65 @@
+EXPERIMENT 5
+Diffie–Hellman Key Exchange
+Step-by-step practical chapter | Source: PDF pages 20–24
+1. Aim
+Show how two parties calculate the same shared secret without transmitting their private values.
+2. Tools Required
+Python 3.x; Visual Studio Code.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Create the file
+1.	Create `exp5_diffie_hellman.py`.
+Step 2: Enter the code
+2.	Copy the code below. It retains the source practical's public parameters p = 23 and g = 5, and private values a = 6 and b = 15.
+Step 3: Run the exchange
+3.	Run `python exp5_diffie_hellman.py`.
+4.	Observe the public values exchanged by Alice and Bob and the two calculated shared secrets.
+Step 4: Confirm the shared secret
+5.	The program compares both secrets. They should match and the program should report a successful key exchange.
+6.	Change either private value to another positive value and run again; both parties should still calculate the same secret using the same parameters.
+5. Program / Configuration
+# Educational Diffie-Hellman demonstration using the source values
+p = 23
+g = 5
+
+# Private values (kept secret in a real exchange)
+a = 6
+b = 15
+
+# Public values
+A = pow(g, a, p)
+B = pow(g, b, p)
+
+print("Public prime (p):", p)
+print("Generator (g):", g)
+print("Alice's public value:", A)
+print("Bob's public value:", B)
+
+alice_secret = pow(B, a, p)
+bob_secret = pow(A, b, p)
+
+print("Alice's shared secret:", alice_secret)
+print("Bob's shared secret:", bob_secret)
+
+if alice_secret == bob_secret:
+    print("Key exchange successful. Shared secret:", alice_secret)
+else:
+    print("Key exchange failed.")
+
+5. Verification and Troubleshooting
+•	With the source values, Alice's public value is 8, Bob's public value is 19, and both shared secrets are 2.
+•	Only public values should be exchanged; private values a and b should not be sent.
+•	If results differ, check the formulas and ensure both parties use the same p and g.
+6. Expected Result
+Alice and Bob independently calculated the same shared secret using Diffie–Hellman key exchange.
+7. Shortcut / Improvement Notes
+Use `pow()` with three arguments for modular exponentiation; it avoids constructing huge intermediate numbers.
+8. Conclusion
+Alice and Bob independently calculated the same shared secret using Diffie–Hellman key exchange.
+9. Viva / Review Questions
+7.	What is the purpose of Diffie–Hellman?
+8.	Which values are public?
+9.	Why does unauthenticated Diffie–Hellman risk a man-in-the-middle attack?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
