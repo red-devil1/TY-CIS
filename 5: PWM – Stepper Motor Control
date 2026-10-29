@@ -1,64 +1,55 @@
-Experiment No.—5: PWM – Stepper Motor Control 
+EXPERIMENT 7
+Web Security with SSL/TLS (HTTPS)
+Step-by-step practical chapter | Source: PDF pages 40–45
+1. Aim
+Create a certificate and private key, run a Python HTTPS server, and verify TLS communication.
+2. Tools Required
+Python 3.x; OpenSSL; browser; Visual Studio Code.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Check prerequisites
+1.	Open a terminal and run `python --version` and `openssl version`. Install Python and OpenSSL if missing, using trusted official installers for your operating system.
+2.	Create a folder named `tls-practical` and open a terminal in it.
+Step 2: Create a self-signed certificate
+3.	Run the OpenSSL command below to create `server.key` and `server.crt`. When prompted for Common Name, enter `localhost` for local testing.
+4.	Keep the private key (`server.key`) private. A self-signed certificate will normally show a browser warning because it is not issued by a trusted certificate authority.
+Step 3: Create a test web page
+5.	Create a file named `index.html` in the same folder and add a small heading such as `HTTPS test page`.
+Step 4: Start an HTTPS server
+6.	Save the Python code below as `https_server.py`.
+7.	Run `python https_server.py`. Keep the terminal open while testing.
+Step 5: Test in the browser
+8.	Open `https://localhost:4443`. The test server should respond over TLS. A certificate warning is expected for a self-signed certificate; do not treat this as a production trust setup.
+9.	To inspect the TLS connection from another terminal, run `openssl s_client -connect localhost:4443 -servername localhost`.
+Step 6: Stop the server
+10.	Return to the server terminal and press Ctrl+C.
+5. Program / Configuration
+# https_server.py — local TLS demonstration
+from http.server import SimpleHTTPRequestHandler, HTTPServer
+import ssl
 
-a) Interface a stepper motor using a motor driver 
-b) Control direction and vary speed using PWM signals 
-c) Observe effect of duty cycle changes on motor movement 
+server = HTTPServer(("localhost", 4443), SimpleHTTPRequestHandler)
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.load_cert_chain(certfile="server.crt", keyfile="server.key")
+server.socket = context.wrap_socket(server.socket, server_side=True)
 
+print("HTTPS test server running at https://localhost:4443")
+server.serve_forever()
 
-Theoretical Steps, Code & Expected Output: 
+5. Verification and Troubleshooting
+•	The browser reaches `https://localhost:4443` and the page is served through TLS.
+•	The certificate details can be inspected in the browser or with `openssl s_client`.
+•	If the server cannot find the certificate, ensure the terminal's current directory contains `server.crt`, `server.key`, `index.html`, and `https_server.py`.
+6. Expected Result
+A local Python HTTPS server was configured with a certificate and key, and TLS communication was verified.
+7. Shortcut / Improvement Notes
+Generate the key/certificate once for the local lab, keep the server key private, and use a real trusted certificate for any production service.
+8. Conclusion
+A local Python HTTPS server was configured with a certificate and key, and TLS communication was verified.
+9. Viva / Review Questions
+11.	What is the difference between HTTP and HTTPS?
+12.	What is a certificate used for?
+13.	Why does a self-signed certificate produce a warning?
 
-Theoretical Steps (Procedure) 
-
-1. Connect the stepper motor to the ULN2003 driver module. 
-2. Connect the driver module input pins (IN1, IN2, IN3, IN4) to Raspberry Pi GPIO pins. 
-3. Connect the VCC and GND of the driver module to the appropriate power supply. 
-4. Boot the Raspberry Pi and open Thonny IDE. 
-5. Import the required Python libraries such as RPi.GPIO and time. 
-6. Configure GPIO mode using BCM numbering. 
-7. Set the GPIO pins connected to the driver module as OUTPUT. 
-8. Define the step sequence required to rotate the motor. 
-9. Implement PWM or delay control to regulate motor speed. 
-10. Execute the program and observe motor rotation. 
-11. Reverse the sequence of signals to change the direction of rotation. 
-12. Modify delay values to study the effect of duty cycle on motor speed. 
-
-Python Code (Stepper Motor Control)
-
-import RPi.GPIO as GPIO 
-import time 
- 
-GPIO.setmode(GPIO.BCM) 
- 
-# GPIO pins connected to ULN2003 
-motor_pins = [17, 18, 27, 22] 
- 
-for pin in motor_pins: 
-    GPIO.setup(pin, GPIO.OUT) 
-    GPIO.output(pin, 0) 
- 
-# Step sequence 
-step_sequence = [ 
-    [1,0,0,0], 
-    [0,1,0,0], 
-    [0,0,1,0], 
-    [0,0,0,1] 
-] 
- 
-try: 
-    while True: 
-        for step in step_sequence: 
-        for i in range(4): 
-            GPIO.output(motor_pins[i], step[i]) 
-        time.sleep(0.01)  # Controls speed
-
-except KeyboardInterrupt: 
-    GPIO.cleanup()
-
-
-Expected Output 
-
-Hardware Observation 
-• The stepper motor begins to rotate in the forward direction. 
-• Each sequence activates one coil at a time, causing step-by-step movement. 
-• Decreasing the delay value increases the motor speed. 
-• Reversing the step sequence results in reverse rotation of the motor. 
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
