@@ -1,0 +1,173 @@
+EXPERIMENT 6
+Configure a Site-to-Site IPsec VPN in Cisco Packet Tracer
+Step-by-step practical chapter | Source: PDF pages 25–39
+1. Aim
+Configure IPsec on two routers to protect traffic between two LANs.
+2. Tools Required
+Cisco Packet Tracer; two Cisco 2911 routers; two PCs; copper straight-through and crossover/automatic connections.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Build the topology
+1.	Open Cisco Packet Tracer and place two 2911 routers (Router0 and Router1) and two PCs (PC0 and PC1).
+2.	Connect PC0 FastEthernet0 to Router0 GigabitEthernet0/0 using a straight-through cable.
+3.	Connect Router0 GigabitEthernet0/2 to Router1 GigabitEthernet0/2 using crossover or Automatically Choose Connection Type.
+4.	Connect Router1 GigabitEthernet0/0 to PC1 FastEthernet0 using a straight-through cable.
+Step 2: Configure PC addressing
+5.	PC0 → Desktop → IP Configuration: IP `192.168.1.10`, subnet mask `255.255.255.0`, default gateway `192.168.1.1`.
+6.	PC1 → Desktop → IP Configuration: IP `192.168.2.10`, subnet mask `255.255.255.0`, default gateway `192.168.2.1`.
+Step 3: Configure Router0 interfaces and route
+7.	Click Router0 → CLI. Enter the commands below. If prompted for the initial configuration dialog, answer `no` and press Enter.
+! Router0
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+exit
+interface gigabitEthernet 0/2
+ ip address 10.0.0.1 255.255.255.252
+ no shutdown
+exit
+ip route 192.168.2.0 255.255.255.0 10.0.0.2
+access-list 110 permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 5
+exit
+crypto isakmp key CIS123 address 10.0.0.2
+crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+crypto map VPN-MAP 10 ipsec-isakmp
+ set peer 10.0.0.2
+ set transform-set VPN-SET
+ match address 110
+exit
+interface gigabitEthernet 0/2
+ crypto map VPN-MAP
+end
+write memory
+
+! Router1 (enter separately on Router1)
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+exit
+interface gigabitEthernet 0/2
+ ip address 10.0.0.2 255.255.255.252
+ no shutdown
+exit
+ip route 192.168.1.0 255.255.255.0 10.0.0.1
+access-list 110 permit ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 5
+exit
+crypto isakmp key CIS123 address 10.0.0.1
+crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+crypto map VPN-MAP 10 ipsec-isakmp
+ set peer 10.0.0.1
+ set transform-set VPN-SET
+ match address 110
+exit
+interface gigabitEthernet 0/2
+ crypto map VPN-MAP
+end
+write memory
+
+Step 4: Configure Router1 interfaces and route
+8.	Click Router1 → CLI and enter the Router1 commands below.
+Step 5: Configure the IPsec policy on both routers
+9.	On Router0, configure the ACL, ISAKMP policy, pre-shared key, transform set and crypto map using the Router0 block below.
+10.	On Router1, configure the mirrored ACL and the same policy/transform set, but set the peer to Router0's transit IP `10.0.0.1`.
+11.	Apply the crypto map to each router's transit interface GigabitEthernet0/2. The pre-shared key and policy settings must match at both ends.
+Step 6: Verify connectivity and tunnel
+12.	First check interface status with `show ip interface brief` on each router.
+13.	From PC0 Command Prompt, run `ping 192.168.2.10`; from PC1, run `ping 192.168.1.10`. The first ping may trigger tunnel negotiation; retry if needed.
+14.	On the routers, run `show crypto isakmp sa` and `show crypto ipsec sa`. Look for an established IKE security association and increasing encapsulation/decapsulation counters.
+Step 7: Save the configuration
+15.	On each router, run `write memory` or `copy running-config startup-config`.
+5. Program / Configuration
+! Router0
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+exit
+interface gigabitEthernet 0/2
+ ip address 10.0.0.1 255.255.255.252
+ no shutdown
+exit
+ip route 192.168.2.0 255.255.255.0 10.0.0.2
+access-list 110 permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 5
+exit
+crypto isakmp key CIS123 address 10.0.0.2
+crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+crypto map VPN-MAP 10 ipsec-isakmp
+ set peer 10.0.0.2
+ set transform-set VPN-SET
+ match address 110
+exit
+interface gigabitEthernet 0/2
+ crypto map VPN-MAP
+end
+write memory
+
+! Router1 (enter separately on Router1)
+enable
+configure terminal
+interface gigabitEthernet 0/0
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+exit
+interface gigabitEthernet 0/2
+ ip address 10.0.0.2 255.255.255.252
+ no shutdown
+exit
+ip route 192.168.1.0 255.255.255.0 10.0.0.1
+access-list 110 permit ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 5
+exit
+crypto isakmp key CIS123 address 10.0.0.1
+crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+crypto map VPN-MAP 10 ipsec-isakmp
+ set peer 10.0.0.1
+ set transform-set VPN-SET
+ match address 110
+exit
+interface gigabitEthernet 0/2
+ crypto map VPN-MAP
+end
+write memory
+
+5. Verification and Troubleshooting
+•	Address plan: PC0 `192.168.1.10/24`, Router0 LAN `192.168.1.1`, transit `10.0.0.1/30`; Router1 transit `10.0.0.2/30`, LAN `192.168.2.1`, PC1 `192.168.2.10/24`.
+•	If ping fails, check cable/link lights, interface IPs, `no shutdown`, default gateways, static routes, matching pre-shared keys, mirrored ACLs and peer addresses.
+•	Packet Tracer device models/IOS images differ; if a command is unsupported, use a compatible router image or follow the supported equivalent shown by your course environment.
+6. Expected Result
+A site-to-site IPsec configuration is applied between the two routers, and LAN-to-LAN connectivity and IPsec counters are checked.
+7. Shortcut / Improvement Notes
+Configure and verify basic routing before adding IPsec. This separates routing problems from VPN negotiation problems.
+8. Conclusion
+A site-to-site IPsec configuration is applied between the two routers, and LAN-to-LAN connectivity and IPsec counters are checked.
+9. Viva / Review Questions
+16.	What does IPsec protect?
+17.	What is the purpose of the interesting-traffic ACL?
+18.	Which commands help verify IPsec security associations?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
