@@ -1,0 +1,50 @@
+EXPERIMENT 8
+Intrusion Detection System (Snort)
+Step-by-step practical chapter | Source: PDF pages 46–55
+1. Aim
+Set up an IDS to monitor network traffic and detect activity matching security rules.
+2. Tools Required
+Snort IDS; Ubuntu/Linux or supported Windows setup; terminal; Wireshark optional for packet inspection.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Prepare a safe lab
+1.	Use a personal test machine or isolated virtual machine. Do not monitor networks or devices without authorization.
+2.	Install Snort using the package or installer appropriate to your OS. Snort command-line options differ by version; check `snort -V` after installation.
+Step 2: Identify the network interface
+3.	On Linux, use `ip addr` to identify the interface used by your lab network. On Windows, use the interface name shown by Snort's supported interface-listing option.
+4.	Make sure the lab interface can see the test traffic. On a switched network, promiscuous capture of other devices' traffic may not be available.
+Step 3: Check configuration
+5.	Locate the Snort configuration file (`snort.lua` in Snort 3; Snort 2 uses `snort.conf`). Validate the configuration with the syntax supported by your installed version.
+6.	Use the built-in/default rules first, then add a small local test rule if the lab requires it.
+Step 4: Add a harmless test rule
+7.	For a local test only, create a rule that alerts on a distinctive string in traffic you generate yourself, or use a course-provided benign test rule.
+8.	Keep rules in the local rules file referenced by your Snort configuration. Do not paste untrusted rule files from unknown sources.
+Step 5: Run IDS in alert mode
+9.	Run Snort with the correct configuration and interface for your installed version. For Snort 3, a common pattern is `sudo snort -c /path/to/snort.lua -i <interface> -A alert_fast`; adjust paths and options to your installation.
+10.	Generate permitted test traffic between lab machines or use a course-provided packet capture.
+Step 6: Review alerts
+11.	Check the terminal output or the configured alert log for your test rule's message.
+12.	Optionally open the lab capture in Wireshark and compare the packet/traffic with the alert.
+Step 7: Finish safely
+13.	Stop Snort with Ctrl+C and save the alert output or a screenshot for your practical record.
+5. Program / Configuration
+# Example of a harmless local Snort rule (syntax commonly used by Snort 2/3)
+alert icmp any any -> any any (msg:"LAB ICMP test alert"; sid:1000001; rev:1;)
+
+5. Verification and Troubleshooting
+•	A test ping or ICMP packet in the monitored lab should trigger the sample alert when the rule is loaded and the interface sees that traffic.
+•	If no alert appears, check the interface, rule-file inclusion, configuration syntax, permissions, and whether the traffic traverses the monitored interface.
+•	Snort 2 and Snort 3 have different configuration formats and command-line options; use the syntax for the installed version.
+6. Expected Result
+Snort was configured to inspect authorized lab traffic and report traffic matching a test detection rule.
+7. Shortcut / Improvement Notes
+Start with a single harmless rule and a known test packet. This makes it easier to confirm the interface and rule loading before adding more rules.
+8. Conclusion
+Snort was configured to inspect authorized lab traffic and report traffic matching a test detection rule.
+9. Viva / Review Questions
+14.	What is an IDS?
+15.	What is a Snort rule SID?
+16.	Why is an alert not proof of compromise?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
