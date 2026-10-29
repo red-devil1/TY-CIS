@@ -1,0 +1,61 @@
+EXPERIMENT 3
+Message Authentication Codes (HMAC-SHA256)
+Step-by-step practical chapter | Source: PDF pages 11–14
+1. Aim
+Generate and verify a Message Authentication Code to check message integrity and authenticity.
+2. Tools Required
+Python 3.x; Visual Studio Code; Python standard-library modules `hmac` and `hashlib`.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Create the file
+1.	Create `exp3_hmac.py` in your practicals folder. No third-party package is required because `hmac` and `hashlib` are included with Python.
+Step 2: Enter the program
+2.	Copy the code below and save the file. It computes an HMAC-SHA256 tag and verifies it, then demonstrates failure after changing the message.
+import hmac
+import hashlib
+
+key = b"secret123"
+message = b"Secure communication is important"
+
+tag = hmac.new(key, message, hashlib.sha256).hexdigest()
+print("MAC:", tag)
+
+# Verify unchanged message using the same secret key
+received_tag = hmac.new(key, message, hashlib.sha256).hexdigest()
+if hmac.compare_digest(tag, received_tag):
+    print("Message is authentic and has not been modified.")
+else:
+    print("Message authentication failed.")
+
+# Demonstrate rejection of a modified message
+changed_message = b"Secure communication has been modified"
+changed_tag = hmac.new(key, changed_message, hashlib.sha256).hexdigest()
+if hmac.compare_digest(tag, changed_tag):
+    print("Modified message accepted.")
+else:
+    print("Message authentication failed for modified message.")
+
+Step 3: Run the program
+3.	Run `python exp3_hmac.py` in the terminal.
+4.	Observe the MAC value and the success message for the unchanged message.
+5.	The altered-message check should report authentication failure.
+Step 4: Perform an extra test
+6.	Change one character in `changed_message` and run again. The verification should still fail.
+7.	For a valid verification, use the same message and same secret key on both sides.
+5. Verification and Troubleshooting
+•	A MAC is printed, followed by a success message for the unchanged message.
+•	The modified message should fail verification because its MAC differs.
+•	Use `hmac.compare_digest` for comparison rather than ordinary string comparison in authentication code.
+6. Expected Result
+HMAC-SHA256 was generated and verified. The test demonstrated that a message modification causes verification to fail.
+7. Shortcut / Improvement Notes
+Use the standard `hmac` module and `compare_digest`; do not invent a custom MAC algorithm.
+8. Conclusion
+HMAC-SHA256 was generated and verified. The test demonstrated that a message modification causes verification to fail.
+9. Viva / Review Questions
+8.	What is a MAC?
+9.	How is HMAC different from encryption?
+10.	Why should compare_digest be used?
+
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
