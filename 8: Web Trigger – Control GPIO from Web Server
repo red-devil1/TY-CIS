@@ -1,139 +1,85 @@
-Experiment No.—8: Web Trigger – Control GPIO from Web Server 
+EXPERIMENT 4
+Digital Signatures
+Step-by-step practical chapter | Source: PDF pages 15–19
+1. Aim
+Demonstrate signing and verification of a message using a private/public key pair.
+2. Tools Required
+Python 3.x; Visual Studio Code.
+3. Before You Begin
+Follow the steps in order. Keep a record of commands, settings, output, and screenshots required by your instructor. Use only systems and networks you own or have permission to test.
+4. Procedure
+Step 1: Create the file
+1.	Create `exp4_signature.py`.
+Step 2: Review the classroom demonstration
+2.	The source practical uses small RSA-style values and a simple character-sum hash. This is useful for illustrating the flow, but it is not a secure digital-signature design.
+3.	For a more reliable practical, use the Python `cryptography` package with RSA-PSS and SHA-256, as in the code below.
+Step 3: Install the required package
+4.	In VS Code Terminal, run `python -m pip install cryptography`. If needed, use `py -m pip install cryptography`.
+Step 4: Enter the program
+5.	Copy the code below and save the file. The program generates a key pair, signs the message with the private key, then verifies it with the public key.
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
+from cryptography.exceptions import InvalidSignature
 
-a) Host a simple Flask web app (Raspberry Pi) or ESP Web Page (Arduino) 
-b) Control a set of LEDs via buttons on a webpage 
-c) Ensure real-time response and feedback 
+message = input("Enter message to sign: ").encode("utf-8")
 
-Code & Output: 
+private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+public_key = private_key.public_key()
 
-(a) Host a Simple Flask Web Application (Theoretical) 
+signature = private_key.sign(
+    message,
+    padding.PSS(
+        mgf=padding.MGF1(hashes.SHA256()),
+        salt_length=padding.PSS.MAX_LENGTH
+    ),
+    hashes.SHA256()
+)
+print("Signature created.")
 
-Steps 
+try:
+    public_key.verify(
+        signature, message,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    print("Signature verified successfully.")
+except InvalidSignature:
+    print("Signature verification failed.")
 
-1. Install Flask on Raspberry Pi using the terminal. 
-pip3 install flask 
-2. Create a Python file named app.py. 
-3. Write a Flask application that hosts a simple webpage. 
-4. Run the Flask server using the terminal. 
-python3 app.py 
-5. Open a web browser and access the web application. 
-http://<RaspberryPi-IP>:5000
+tampered_message = message + b" (modified)"
+try:
+    public_key.verify(
+        signature, tampered_message,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    print("Tampered message unexpectedly verified.")
+except InvalidSignature:
+    print("Modified message rejected: signature verification failed.")
 
-Code (Flask Web Server) 
+Step 5: Run and verify
+6.	Run `python exp4_signature.py`. Enter a test message when prompted.
+7.	The program should print `Signature verified successfully` for the original message.
+8.	It then verifies a modified message; verification should fail.
+5. Verification and Troubleshooting
+•	The original message verifies successfully.
+•	The modified message is rejected because the signature no longer matches the message.
+•	If Python reports `No module named cryptography`, install the package using the command in Step 3.
+6. Expected Result
+A digital signature was generated with a private key and verified with the corresponding public key. A modified message failed verification.
+7. Shortcut / Improvement Notes
+Use a maintained cryptographic library and a standard signature scheme instead of a homemade hash or tiny RSA parameters.
+8. Conclusion
+A digital signature was generated with a private key and verified with the corresponding public key. A modified message failed verification.
+9. Viva / Review Questions
+9.	What does a digital signature verify?
+10.	Which key signs a message?
+11.	Does a digital signature hide the message contents?
 
-from flask import Flask 
- 
-app = Flask(__name__) 
- 
-@app.route('/') 
-def home(): 
-    return "Welcome to Raspberry Pi Web Server" 
- 
-if __name__ == '__main__': 
-    app.run(host='0.0.0.0', port=5000) 
-
-Expected Output 
-When the browser accesses the server: 
-Welcome to Raspberry Pi Web Server 
-This confirms that the Flask web server is running successfully. 
-
-
-(b) Control LEDs via Buttons on a Webpage (Theoretical) 
-Connection 
-Component     Raspberry Pi 
-LED 1         GPIO17 
-LED 2         GPIO18 
-LED Cathode   GND
-
-Steps 
-1. Connect LEDs to Raspberry Pi GPIO pins. 
-2. Create a Flask application that includes LED control routes. 
-3. Design a webpage with ON and OFF buttons. 
-4. When a button is pressed, the Flask route changes the GPIO output state.
-
-CODE
-
-from flask import Flask, render_template 
-import RPi.GPIO as GPIO 
- 
-GPIO.setmode(GPIO.BCM) 
- 
-LED1 = 17 
-LED2 = 18 
- 
-GPIO.setup(LED1, GPIO.OUT) 
-GPIO.setup(LED2, GPIO.OUT) 
- 
-app = Flask(__name__) 
- 
-@app.route('/') 
-def index(): 
-    return ''' 
-    <h2>LED Control</h2> 
-    <a href="/led1_on"><button>LED1 ON</button></a> 
-    <a href="/led1_off"><button>LED1 OFF</button></a><br><br> 
-    <a href="/led2_on"><button>LED2 ON</button></a> 
-    <a href="/led2_off"><button>LED2 OFF</button></a> 
-    ''' 
- 
-@app.route('/led1_on') 
-def led1_on(): 
-    GPIO.output(LED1, True) 
-    return "LED1 Turned ON" 
- 
-@app.route('/led1_off') 
-def led1_off(): 
-    GPIO.output(LED1, False) 
-    return "LED1 Turned OFF" 
- 
-@app.route('/led2_on') 
-def led2_on(): 
-    GPIO.output(LED2, True) 
-    return "LED2 Turned ON" 
- 
-@app.route('/led2_off') 
-def led2_off(): 
-    GPIO.output(LED2, False) 
-    return "LED2 Turned OFF" 
-if __name__ == '__main__': 
-app.run(host='0.0.0.0') 
-
-Expected Output 
-
-Webpage Interface Example: 
-LED Control 
-[LED1 ON]   [LED1 OFF] 
-[LED2 ON]   [LED2 OFF] 
-Pressing buttons changes the LED states. 
-Example responses: 
-LED1 Turned ON 
-LED1 Turned OFF 
-LED2 Turned ON 
-LED2 Turned OFF 
-
-(c) Ensure Real-Time Response and Feedback (Theoretical) 
-Working Logic 
-Logical process: 
-The system provides immediate feedback when the user interacts with the webpage. 
-User Clicks Button 
-↓ 
-HTTP Request Sent 
-↓ 
-Flask Server Receives Request 
-↓ 
-GPIO Output Updated 
-↓ 
-LED State Changes 
-↓ 
-Feedback Message Displayed
-
-Expected Observation 
-
-Button Pressed       LED Status 
-LED1 ON               LED1 glows 
-LED1 OFF             LED1 turns off 
-LED2 ON               LED2 OFF 
-LED2 glows           LED2 turns off 
-
-This demonstrates real-time interaction between the web server and Raspberry Pi GPIO 
-hardware. 
+Prepared from the supplied CIS Practicals PDF. Additional workflow notes are included to make the practical easier to reproduce; source topics and experiment order are retained.
